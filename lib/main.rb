@@ -46,6 +46,12 @@ class Game
       at = at.predecessor
     end
 
+    # reset node
+    @board.each do |node|
+      node.visited = false
+      node.predecessor = nil
+    end
+
     path.reverse
   end
 
