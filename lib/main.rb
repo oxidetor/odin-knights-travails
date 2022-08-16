@@ -45,6 +45,7 @@ class Game
       path.push(at.data)
       at = at.predecessor
     end
+    path.push(at.data)
 
     # reset node
     @board.each do |node|
