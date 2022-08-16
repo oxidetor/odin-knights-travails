@@ -41,7 +41,6 @@ class Game
     end
   end
 
-  # TODO: Refactor shortest_path_reversed
   def shortest_path(start_node, finish_node)
     path = []
     at = finish_node
