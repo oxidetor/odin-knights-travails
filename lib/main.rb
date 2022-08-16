@@ -1,34 +1,77 @@
-class Node
-  attr_accessor :data, :children
+class Game
+  def initialize
+    @board = populate_board
+    build_graph
+  end
 
-  def initialize(data = nil, children = nil)
-    @data = data
-    @children = children
+  def populate_board
+    Array.new(8) { |row| Array.new(8) { |column| [row, (column - 1) + 1] } }
+         .flatten(1)
+         .map { |move| Node.new(move) }
+  end
+
+  def build_graph
+    @board.each do |node|
+      adjacent_moves = node.adjacent_moves
+      node.adjacents = adjacent_moves.map { |move| find(move) }
+    end
+  end
+
+  def find(move)
+    @board.find { |node| node.data == move }
+  end
+
+  def knights_moves(start, finish)
+    queue = [find(start)]
+    finish_node = find(finish)
+
+    visited = []
+    until queue.empty?
+
+      head_of_queue = queue.first
+      visited.push(head_of_queue)
+
+      return visited if head_of_queue.data == finish_node.data
+
+      queue = queue + head_of_queue.adjacents - visited
+
+    end
+  end
+
+  def to_s
+    p(@board.map(&:data))
   end
 end
 
-class Tree
-  attr_reader :board, :root
+class Node
+  attr_accessor :data, :adjacents, :visited, :distance_from_source, :predecessor
 
-  def initialize(start = [3, 2])
-    @board = Array.new(8) { |row| Array.new(8) { |column| [row, (column - 1) + 1] } }.flatten(1)
-    @root = start
+  def initialize(data)
+    @data = data
+    @adjacents = []
+    @visited = false
+    @distance_from_source = 10_000
+    @predecessor = nil
   end
 
-  def build_tree(node = @root)
-    # return if node.children.include?(@root)
+  def valid_move(temp)
+    temp.first.between?(0, 7) && temp.last.between?(0, 7)
   end
 
-  def next_knight_moves(current)
+  def adjacent_moves
     steps = [[-1, -2], [-1, 2], [1, -2], [1, 2], [-2, -1], [-2, 1], [2, -1], [2, 1]]
     next_moves = []
     steps.each do |step|
-      temp = [current.first + step.first, current.last + step.last]
-      next_moves.push(temp) if board.include?(temp)
+      temp = [data.first + step.first, data.last + step.last]
+      next_moves.push(temp) if valid_move(temp)
     end
     next_moves
   end
+
+  def to_s
+    "Node: #{@data}\tAdjacents: #{adjacents.map(&:data)}"
+  end
 end
 
-tree = Tree.new
-p tree.next_knight_moves([7, 7])
+game = Game.new
+puts game.knights_moves([0, 0], [4, 3])
