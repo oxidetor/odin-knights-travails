@@ -23,13 +23,10 @@ class Game
   end
 
   def knight_moves(start, finish)
-    queue = [find(start)]
-    finish_node = find(finish)
-    process_queue(queue)
-    shortest_path_reversed(find(start), finish_node)
+    process_queue([find(start)])
+    shortest_path(find(start), find(finish))
   end
 
-  # TODO: Refactor process_queue
   def process_queue(queue)
     until queue.empty?
       head_of_queue = queue.first
@@ -45,16 +42,15 @@ class Game
   end
 
   # TODO: Refactor shortest_path_reversed
-  def shortest_path_reversed(start_node, finish_node)
+  def shortest_path(start_node, finish_node)
     path = []
     at = finish_node
-    until at.nil? || at == start_node
+    until at == start_node
       path.push(at.data)
       at = at.predecessor
     end
-    path.push(at.data)
     reset_nodes
-    path.reverse
+    path.push(at.data).reverse
   end
 
   def reset_nodes
