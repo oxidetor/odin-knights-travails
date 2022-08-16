@@ -20,7 +20,7 @@ class Game
     @board.find { |node| node.data == move }
   end
 
-  def knights_moves(start, finish)
+  def knight_moves(start, finish)
     queue = [find(start)]
     finish_node = find(finish)
     process_queue(queue)
@@ -77,20 +77,16 @@ class Node
     @predecessor = nil
   end
 
-  # TODO: Rename temp
-  def valid_move(temp)
-    temp.first.between?(0, 7) && temp.last.between?(0, 7)
+  def valid_move(move)
+    move.first.between?(0, 7) && move.last.between?(0, 7)
   end
 
-  # TODO: Refactor next_moves
   def next_moves
     steps = [[-1, -2], [-1, 2], [1, -2], [1, 2], [-2, -1], [-2, 1], [2, -1], [2, 1]]
-    next_moves_arr = []
-    steps.each do |step|
-      temp = [data.first + step.first, data.last + step.last]
-      next_moves_arr.push(temp) if valid_move(temp)
-    end
-    next_moves_arr
+    steps.map do |step|
+      move = [data.first + step.first, data.last + step.last]
+      valid_move(move) ? move : nil
+    end.compact
   end
 
   def to_s
@@ -99,6 +95,9 @@ class Node
 end
 
 game = Game.new
-p game.knights_moves([0, 0], [7, 7])
-p game.knights_moves([0, 0], [4, 3])
-p game.knights_moves([2, 2], [5, 5])
+p game.knight_moves([0, 0], [7, 7])
+p game.knight_moves([0, 0], [4, 3])
+p game.knight_moves([2, 2], [5, 5])
+p game.knight_moves([0, 0], [1, 2])
+p game.knight_moves([0, 0], [3, 3])
+p game.knight_moves([3, 3], [0, 0])
