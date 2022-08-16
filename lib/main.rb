@@ -12,8 +12,8 @@ class Game
 
   def build_graph
     @board.each do |node|
-      adjacent_moves = node.adjacent_moves
-      node.adjacents = adjacent_moves.map { |move| find(move) }
+      next_moves = node.next_moves
+      node.neighbours = next_moves.map { |move| find(move) }
     end
   end
 
@@ -33,7 +33,7 @@ class Game
 
       return visited if head_of_queue.data == finish_node.data
 
-      queue = queue + head_of_queue.adjacents - visited
+      queue = queue + head_of_queue.neighbours - visited
 
     end
   end
@@ -44,11 +44,11 @@ class Game
 end
 
 class Node
-  attr_accessor :data, :adjacents, :visited, :distance_from_source, :predecessor
+  attr_accessor :data, :neighbours, :visited, :distance_from_source, :predecessor
 
   def initialize(data)
     @data = data
-    @adjacents = []
+    @neighbours = []
     @visited = false
     @distance_from_source = 10_000
     @predecessor = nil
@@ -58,18 +58,18 @@ class Node
     temp.first.between?(0, 7) && temp.last.between?(0, 7)
   end
 
-  def adjacent_moves
+  def next_moves
     steps = [[-1, -2], [-1, 2], [1, -2], [1, 2], [-2, -1], [-2, 1], [2, -1], [2, 1]]
-    next_moves = []
+    next_moves_arr = []
     steps.each do |step|
       temp = [data.first + step.first, data.last + step.last]
-      next_moves.push(temp) if valid_move(temp)
+      next_moves_arr.push(temp) if valid_move(temp)
     end
-    next_moves
+    next_moves_arr
   end
 
   def to_s
-    "Node: #{@data}\tAdjacents: #{adjacents.map(&:data)}"
+    "Node: #{@data}\tneighbours: #{neighbours.map(&:data)}"
   end
 end
 
