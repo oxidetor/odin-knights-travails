@@ -12,8 +12,7 @@ class Game
 
   def build_graph
     @board.each do |node|
-      next_moves = node.next_moves
-      node.neighbours = next_moves.map { |move| find(move) }
+      node.neighbours = node.next_moves.map { |move| find(move) }
     end
   end
 
@@ -24,9 +23,13 @@ class Game
   def knights_moves(start, finish)
     queue = [find(start)]
     finish_node = find(finish)
+    process_queue(queue)
+    shortest_path_reversed(find(start), finish_node)
+  end
 
+  # TODO: Refactor process_queue
+  def process_queue(queue)
     until queue.empty?
-
       head_of_queue = queue.first
       head_of_queue.neighbours.each do |neighbour|
         next if neighbour.visited
@@ -35,25 +38,28 @@ class Game
         neighbour.visited = true
         neighbour.predecessor = head_of_queue
       end
-
       queue = queue.drop(1)
-
     end
+  end
+
+  # TODO: Refactor shortest_path_reversed
+  def shortest_path_reversed(start_node, finish_node)
     path = []
     at = finish_node
-    until at.nil? || at == find(start)
+    until at.nil? || at == start_node
       path.push(at.data)
       at = at.predecessor
     end
     path.push(at.data)
+    reset_nodes
+    path.reverse
+  end
 
-    # reset node
+  def reset_nodes
     @board.each do |node|
       node.visited = false
       node.predecessor = nil
     end
-
-    path.reverse
   end
 
   def to_s
@@ -71,10 +77,12 @@ class Node
     @predecessor = nil
   end
 
+  # TODO: Rename temp
   def valid_move(temp)
     temp.first.between?(0, 7) && temp.last.between?(0, 7)
   end
 
+  # TODO: Refactor next_moves
   def next_moves
     steps = [[-1, -2], [-1, 2], [1, -2], [1, 2], [-2, -1], [-2, 1], [2, -1], [2, 1]]
     next_moves_arr = []
@@ -86,7 +94,7 @@ class Node
   end
 
   def to_s
-    "Node: #{@data}\tneighbours: #{neighbours.map(&:data)}"
+    "Node: #{@data}\tNeighbours: #{neighbours.map(&:data)}"
   end
 end
 
