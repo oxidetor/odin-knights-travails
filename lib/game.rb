@@ -58,9 +58,6 @@ class Game
   end
 
   def reset_nodes
-    @board.each do |node|
-      node.visited = false
-      node.predecessor = nil
-    end
+    @board.each(&:reset_node)
   end
 end

@@ -8,10 +8,6 @@ class Node
     @predecessor = nil
   end
 
-  def valid_move(move)
-    move.first.between?(0, 7) && move.last.between?(0, 7)
-  end
-
   def next_moves
     steps = [[-1, -2], [-1, 2], [1, -2], [1, 2], [-2, -1], [-2, 1], [2, -1], [2, 1]]
     steps.map do |step|
@@ -20,7 +16,12 @@ class Node
     end.compact
   end
 
-  def to_s
-    "Node: #{@data}\tNeighbours: #{neighbours.map(&:data)}"
+  def valid_move(move)
+    move.first.between?(0, 7) && move.last.between?(0, 7)
+  end
+
+  def reset_node
+    @visited = false
+    @predecessor = nil
   end
 end
