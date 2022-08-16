@@ -25,17 +25,28 @@ class Game
     queue = [find(start)]
     finish_node = find(finish)
 
-    visited = []
     until queue.empty?
 
       head_of_queue = queue.first
-      visited.push(head_of_queue)
+      head_of_queue.neighbours.each do |neighbour|
+        next if neighbour.visited
 
-      return visited if head_of_queue.data == finish_node.data
+        queue.push(neighbour)
+        neighbour.visited = true
+        neighbour.predecessor = head_of_queue
+      end
 
-      queue = queue + head_of_queue.neighbours - visited
+      queue = queue.drop(1)
 
     end
+    path = []
+    at = finish_node
+    until at.nil? || at == find(start)
+      path.push(at.data)
+      at = at.predecessor
+    end
+
+    path.reverse
   end
 
   def to_s
@@ -44,13 +55,12 @@ class Game
 end
 
 class Node
-  attr_accessor :data, :neighbours, :visited, :distance_from_source, :predecessor
+  attr_accessor :data, :neighbours, :visited, :predecessor
 
   def initialize(data)
     @data = data
     @neighbours = []
     @visited = false
-    @distance_from_source = 10_000
     @predecessor = nil
   end
 
@@ -74,4 +84,6 @@ class Node
 end
 
 game = Game.new
-puts game.knights_moves([0, 0], [4, 3])
+p game.knights_moves([0, 0], [7, 7])
+p game.knights_moves([0, 0], [4, 3])
+p game.knights_moves([2, 2], [5, 5])
